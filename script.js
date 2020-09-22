@@ -1,7 +1,28 @@
+// Get photos from unsplash API
+
+const imageContainer = document.getElementById('image-container');
+const loader = document.getElementById('loader');
+
+let ready = false;
+let imagesLoaded = 0;
+let totalImages = 0;
+let photosArray = [];
+
 // Unsplash API
-const count = 10;
+const count = 30;
 const apiKey = 'wr1aLGCaCuoz407ndRAeLSU88K8FXr29hbLPky7u4dw';
 const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`;
+
+// check if all images were loaded
+function imageLoaded() {
+	// console.log('images loaded');
+	imagesLoaded++;
+	console.log(imagesLoaded);
+	if (imagesLoaded === totalImages) {
+		ready = true;
+		console.log('ready =', ready);
+	}
+}
 
 // helper function to set attributes on DOM elements
 function setAttributes(element, attributes) {
@@ -12,6 +33,9 @@ function setAttributes(element, attributes) {
 
 // function to Create elements for links and photos, then Add to DOM
 function displayPhotos() {
+	imagesLoaded = 0;
+	totalImages = photosArray.length;
+	console.log('total images', totalImages);
 	// Run function below for each object in photosArray
 	photosArray.forEach((photo) => {
 		// create <a> attribute to link to unsplash photos
@@ -37,18 +61,11 @@ function displayPhotos() {
 	});
 }
 
-// Get photos from unsplash API
-
-const imageContainer = document.getElementById('image-container');
-const loader = document.getElementById('loader');
-
-let photosArray = [];
-
 async function getPhotos() {
 	try {
 		const response = await fetch(apiUrl);
 		photosArray = await response.json();
-		console.log(photosArray);
+		// console.log(photosArray);
 		displayPhotos();
 	} catch (error) {
 		//catch error here
@@ -57,13 +74,12 @@ async function getPhotos() {
 
 // check to see if scrolling near bottom of page, if so load more photos from api
 window.addEventListener('scroll', () => {
-	//
 	if (
-		window.innerHeight + window.scrollY >=
-		document.body.offsetHeight - 1000
+		window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 &&
+		ready
 	) {
+		ready = false;
 		getPhotos();
-		console.log('load more');
 	}
 });
 
