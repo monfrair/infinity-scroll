@@ -29,6 +29,8 @@ function displayPhotos() {
 			alt: photo.alt_description,
 			title: photo.alt_description,
 		});
+		// Event listener, check when each is finished loading
+		img.addEventListener('load', imageLoaded);
 		// Put <img> inside <a> element, then put both inside image container element
 		item.appendChild(img);
 		imageContainer.appendChild(item);
@@ -52,6 +54,18 @@ async function getPhotos() {
 		//catch error here
 	}
 }
+
+// check to see if scrolling near bottom of page, if so load more photos from api
+window.addEventListener('scroll', () => {
+	//
+	if (
+		window.innerHeight + window.scrollY >=
+		document.body.offsetHeight - 1000
+	) {
+		getPhotos();
+		console.log('load more');
+	}
+});
 
 // On Load
 getPhotos();
